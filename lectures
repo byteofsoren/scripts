@@ -1,0 +1,74 @@
+#!/bin/bash
+
+#LECTURE=$(find -L  /home/$USER/_curent -iname '*.pdf' | awk -F '_curent' '{print $2}' | grep 'lect' | fzf)
+
+PDFVIEW=zathura
+PATH=""
+__ScriptVersion="0.1"
+
+#===  FUNCTION  ================================================================
+#         NAME:  usage
+#  DESCRIPTION:  Display usage information.
+#===============================================================================
+function usage ()
+{
+    echo "Usage :  $0 [options] [str]
+
+    This script automates the finding lecture pdfs in the _curent diretory.
+    When run with out argument the user could fuzzy select a lecture.
+    Options:
+    -h|help       Display this message
+    -v|version    Display script version
+    -c|course     Select course to minimize search results
+    -f|find {str} Searches the lectures for a string"
+
+}    # ----------  end of function usage  ----------
+
+function findlecture()
+{
+    local search=$2
+    local mypath="/home/$USER/_curent/$1/"
+    echo "findlecture in $mypath search for $search "
+    if [[ ! $search == '' ]]; then
+
+        if [[ -d "$mypath" ]]; then
+            echo "Searcth on $search"
+            #found=$(find -L ~/_curent/ -iname '*.pdf' -print0 |xargs -0 pdfgrep -e 'vision'| fzf | awk -F ':' '{print $1}')
+            found=$(find -L $mypath -iname '*.pdf' -print0 |xargs -0 pdfgrep -e 'vision'| fzf | awk -F ':' '{print $1}')
+            echo $found
+
+
+            if [[ ! $found == '' ]]; then
+                $PDFVIEW $found
+            else
+                echo "no pdf selected"
+            fi
+        else
+            echo "path $mypath is not found"
+        fi
+    else
+        echo "No search tag given"
+    fi
+
+}
+
+#-----------------------------------------------------------------------
+#  Handle command line arguments
+#-----------------------------------------------------------------------
+
+while getopts ":hvc:f:" opt
+do
+  case $opt in
+
+    h|help     )  usage; exit 0   ;;
+
+    v|version   )  echo "$0 -- Version $__ScriptVersion"; exit 0   ;;
+    c|course    )  PATH="$OPTARG"  ;;
+    f|find      )  findlecture $PATH $OPTARG;;
+    #f|find     )  echo $OPTARG;;
+
+    * )  $PDFVIEW $(find -L  /home/$USER/_curent -iname '*.pdf' | awk -F '_curent' '{print $2}' | grep 'lect' | fzf) &;;
+  esac    # --- end of case ---
+done
+shift $(($OPTIND-1))
+

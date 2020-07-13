@@ -1,0 +1,7 @@
+#!/bin/bash
+echo "Urlget created by Magnus Sörensen"
+WEB=firefox
+URL=$(grep --only-matching --perl-regexp "http(s?):\/\/[^ \"\(\)\<\>]*" $1 | fzf)
+if [[ $URL =~ "" ]]; then
+    $WEB $URL
+fi

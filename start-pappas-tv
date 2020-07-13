@@ -1,0 +1,11 @@
+#!/bin/bash
+echo "Start HDMI2"
+xrandr --output HDMI2 --auto
+echo "Start HDMI2 with 720p (1280x720)"
+xrandr --output HDMI2 --mode 1280x720
+echo "Set scale to 1.45x1.40"
+xrandr --output HDMI2 --scale 1.60x2.00
+xrandr --output HDMI2 --auto
+echo "---Done with display----"
+echo "In pawocontroll change last row to HDMI2 output"
+pavucontrol -m &

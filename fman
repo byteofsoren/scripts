@@ -1,0 +1,2 @@
+#!/bin/bash
+man "$(man -k . | fzf | awk '{print $1}')"

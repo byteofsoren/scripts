@@ -1,0 +1,44 @@
+#!/bin/bash
+
+logdir=~/scripts/data/pinglog
+logfile=$(date +%Y%m%d-%H:%M.%S).log
+loglatest="latest.log"
+
+function startup() {
+    if [ ! -d $lodgdir ]; then
+        echo startup
+        mkdir "$logdir";
+    fi
+    unlink "$loglatest"
+    ln -s "$logfile" "$loglatest"     # fi
+
+}
+
+
+function main() {
+    local current
+    current=$(pwd)
+    cd "$logdir"
+    startup;
+    #trap "{ cd $current ; exit logging }" SIGINT SIGTERM
+    trap "{ cd $current ; exit logging }" SIGQUIT SIGABRT SIGTERM
+    while [ 1 ]; do
+        pingresults=$(ping -c 1 8.8.8.8)
+        sucsess=$?
+        if [ ! $sucsess -eq 0 ]; then
+            echo "Failed"
+            pingms="-1"
+        else
+            pingms=$(echo "$pingresults" | grep 'time=' | cut -d '=' -f 4 | cut -d ' ' -f 1)
+        fi
+        echo "$pingms ms"
+        echo "$pingms" >> "$logdir/$logfile"
+        sleep 5;
+    done
+    cd "$current"
+}
+
+
+# Start the script here!
+main
+

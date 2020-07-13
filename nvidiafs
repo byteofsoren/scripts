@@ -1,0 +1,2 @@
+#!/bin/bash
+sshfs -o allow_other,default_permissions nvidia@192.168.1.99:/homessd/nvidia/ ~/nvidia

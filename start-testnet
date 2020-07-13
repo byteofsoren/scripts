@@ -1,0 +1,22 @@
+#!/bin/bash
+COUNTER=20
+PINGWORKED=1
+while [[ ! PINGWORKED -eq 0 ]]; do
+    echo "Testing connection @$COUNTER"
+    ping -c 1 8.8.8.8 > /dev/null
+    PINGWORKED=$?
+    COUNTER=$((COUNTER - 1))
+    sleep 1
+    if [[ COUNTER -eq 0 ]]; then
+        echo "Failed to secure connection $COUNTER==0"
+        break
+    fi
+done
+if [[ ! COUNTER -eq 0 ]]; then
+    echo "Success"
+else
+    echo "EROR chec stats"
+    ip a
+    netctl list | grep '*'
+fi
+

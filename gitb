@@ -1,0 +1,8 @@
+#!/bin/bash
+git status > /dev/null
+if [ ! $? -eq 128 ];
+then
+    git checkout $(git branch | fzf | sed 's/*//' | awk '{print $1}')
+else
+    echo "No git was found."
+fi

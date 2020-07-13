@@ -1,0 +1,9 @@
+#!/bin/bsah
+isexit=0;
+for row in $(pdftotext $1 - )
+do
+    google_speech "$row";echo "$row"
+    continue
+
+done
+

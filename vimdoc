@@ -1,0 +1,9 @@
+#!/bin/bash
+# Thoughth of using vim with mutliple configurations.
+# This would allow vim to be used with a different subset of commands
+# Dependent on the task at hand.
+# In this bash file vim is started with documentation in mind.
+#
+# To start vim with a other config us the -U {file} parameter.
+# i.e $ vim -U .vimrc_doc
+

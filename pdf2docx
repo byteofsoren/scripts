@@ -1,0 +1,7 @@
+#!/bin/bash
+[ -z $1 ] && echo -e "Convert pdf to doc\npdf2doc input.pdf" && \
+[ ! -z $(command -v abiword) ] && \
+    abiword --to=doc $1 || \
+[ ! -z $(command -v libreoffice) ] && \
+    libreoffice --infilter=="writer_pdf_import" --headless \
+    --convert-to doc:"writer_pdf_Export" $1

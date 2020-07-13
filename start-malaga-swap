@@ -1,0 +1,41 @@
+#!/bin/bash
+
+CURRENT=$(netctl list | grep -e '*' | awk '{print $2}')
+#SWAPA="malaga_home"
+SWAPA="malaga_home"
+SWAPB="eduroam"
+function swaping() {
+    echo "Stop $1: start $2"
+    sudo netctl stop $1
+    sleep 1
+    sudo netctl start $2
+}
+
+if [[ $CURRENT =~ "" ]]; then
+    echo "Connection $CURRENT"
+    if [[ $CURRENT -eq $SWAPA ]]; then
+        swaping $SWAPA $SWAPB
+        OUT=$?
+    elif [[ $CURRENT -eq $SWAPB ]]; then
+        swaping $SWAPB $SWAPA
+        OUT=$?
+    fi
+    if [[ $OUT -eq 1 ]]; then
+        echo "Swapping done"
+        COUNTER=100
+        PINGWORKED=1
+        while [[ ! PINGWORKED -eq 0 ]]; do
+            ping -c 1 8.8.8.8 > /dev/null
+            PINGWORKED=$?
+            COUNTER=$((COUNTER - 1))
+            sleep 1
+            if [[ COUNTER -eq 0 ]]; then
+                echo "Failed tho create a connection! exit"
+                exit -1
+            fi
+        done
+    fi
+
+
+fi
+start-testnet

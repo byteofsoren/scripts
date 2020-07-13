@@ -1,0 +1,1 @@
+git log -30 --reverse --pretty='%h - %an, %ar : %s'

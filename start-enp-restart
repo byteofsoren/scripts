@@ -1,0 +1,5 @@
+#!/bin/bash
+netctl stop enp
+sleep 1
+netctl start enp
+start-testnet

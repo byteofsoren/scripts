@@ -1,0 +1,12 @@
+#!/bin/bash
+PDFVIEW=zathura
+TEXTVIEW=vim
+# BOOK="$(find ~/$BOOKDIR -iname '*.pdf' | awk -F '/$BOOKDIR/' '{print $2}')"
+BOOK=$(find ~/books/ -iname '*.pdf' | awk -F '/books/' '{print $2}' | fzf)
+if [[ $BOOK == *.pdf ]]; then
+    echo "open pdf $BOOK"
+    $PDFVIEW "/home/$USER/books/$BOOK"
+elif [[ $BOOK == *.tex ]]; then
+    echo "open vim $BOOK"
+    $TEXTVIEW "/home/$USER/books/$BOOK"
+fi

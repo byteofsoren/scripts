@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo sshfs $(cat /home/r00tr4t/scripts/data/sshfs | fzf | awk -F '#' '{print $2}')

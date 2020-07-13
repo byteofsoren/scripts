@@ -1,0 +1,2 @@
+#!/bin/bash
+ssh -YC nvidia@192.168.1.99 'x2x -east -to :0'
