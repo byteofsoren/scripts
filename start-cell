@@ -1,0 +1,22 @@
+#!/bin/bash
+
+function select_dev() {
+    echo -e $(simple-mtpfs -l) | dmenu | awk -F ':' '{print $1}'
+}
+
+function select_fun() {
+    modes="mount\nunmount\nexit"
+    selec_mode=$(echo -e "$modes" | dmenu)
+    if [[ $selec_mode  == 'mount' ]]; then
+        echo "mount phone"
+        dev=$(select_dev)
+        echo $dev
+        simple-mtpfs --device $dev  /home/r00tr4t/cell/
+    elif [[ $selec_mode == 'unmount' ]]; then
+        echo "unmount phone"
+        fusermount -u /home/r00tr4t/cell
+    fi
+}
+
+
+select_fun

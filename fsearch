@@ -1,0 +1,52 @@
+#!/bin/bash
+
+Fstr=""
+Ftyp="*.*"
+
+function mysearch() {
+    path=$(pwd)
+    find $path -type f -name "$Ftyp" | while read fp;
+    do
+        if grep -q "$Fstr" $fp;
+            then
+            # echo "---- Flie $fp ------" | sed -e "s|$path||g"
+            echo -e "File ---- $(relpath $path $fp) ----"
+            grep --color=always "$Fstr" $fp
+        fi;
+    done
+}
+
+function Help() {
+    echo "Fsearch finds files containing string"
+    echo ""
+    echo "Input arguments"
+    echo -e "\t-h This help tetx"
+    echo -e "\t-s Search string -s 'hello' search for hello in -p"
+    echo -e "\t-t File type like '*.py' or 'car*.cpp' "
+    echo -e "\t\t '$Ftyp' is the default"
+    echo -e ""
+    echo -e " Example:"
+    echo -e "   The following example searches the current and"
+    echo -e "   all subdirectories for a tex file for a line"
+    echo -e "   that includes hello."
+    echo -e ""
+    echo -e "\t\$ fsearch -s 'hello' -t '*.tex'"
+    echo -e ""
+
+}
+
+while getopts ":hs:t::" option; do
+    case $option in
+        h) # display Help
+             Help
+             exit;;
+        t) # Enter a search string
+            Ftyp=$OPTARG;;
+        s) # Enter a name
+            Fstr=$OPTARG;;
+        \?) # Invalid option
+             echo "Error: Invalid option"
+             exit;;
+    esac
+done
+mysearch

@@ -1,0 +1,59 @@
+#!/bin/bash
+
+DEFDIR="/home/r00tr4t/Downloads/"
+FILEID="moon*.bin"
+DELETEBIN=0
+DELAY=5
+
+function update_moonlander() {
+	# readarray stores the avaible files in an variable named files
+	readarray -t -d '' files < <(LC_ALL=C find $DEFDIR -maxdepth 1 -type f -name "$FILEID" ! -name '.*' -printf '%T@/%f\0' |  sort -rzn | cut -zd/ -f2)
+
+	if [[ -f "$DEFDIR${files[0]}" ]]; then
+		echo "Latest moonlander file was: ${files[0]}"
+		sudo wally-cli "$DEFDIR${files[0]}"
+		sleep $DELAY
+		setxkbmap se
+		if [[ $DELETEBIN == 1 ]]; then
+			rm $DEFDIR${files[0]}
+		fi
+	else
+		echo "No moonlander file existed."
+	fi
+}
+
+function Help() {
+    echo -e "Moonlander keyboard automated service"
+    echo -e ""
+    echo -e " $ moonlander -h -u"
+    echo -e ""
+    echo -e "\t-h This help."
+    echo -e "\t-u Update moonlander from default directory"
+    echo -e "\t\tDefault directory $DEFDIR"
+    echo -e "\t-d Delete the moonlander.bin file"
+    echo -e "\t-t [sec] delay time to set keymap if needed to change on the fly."
+    # echo -e ""
+    # echo -e ""
+
+}
+
+while getopts ":hdust:" option; do
+    case $option in
+        h) # display Help
+             Help
+             exit;;
+		d) # Delete bin file
+			DELETEBIN=1;;
+        u) # Enter a search string
+             update_moonlander
+             exit;;
+		s) # Set se keyboard
+			setxkbmap se
+			exit;;
+		t) # Set the time delay on assignin the keymap.
+			DELAY=$OPTARG;;
+        \?) # Invalid option
+             echo "Error: Invalid option"
+             exit;;
+    esac
+done

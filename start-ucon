@@ -1,0 +1,108 @@
+#!/bin/bash
+
+CONF="/home/$USER/scripts/data/ubuntu_user.sh"
+
+source $CONF
+
+function x2x_menu() {
+    pos=$(echo -e "East\nNorth\nWest\nSouth\nExit" | dmenu -l 5 | tr "[:upper:]" "[:lower:]")
+    echo "Connecting to $ip"
+    echo "pos = $pos"
+    if [[ $pos != "Exit" ]]; then
+        # ref=$(echo -e "0\n1\n2\nExit" | dmenu -l 4)
+        ref=0
+        echo "ref = $ref"
+        if [[ $ref != "Exit" ]]; then
+            # com="$user@$ip'x2x -$(echo $pos | tr '[:upper:]' '[:lower:]' ) -to :$(echo $ref).0'"
+
+            echo $com
+            # ssh -YC $(echo "$com")
+            ssh -YC $user@$ip x2x -east -to :0.0
+            # ssh -YC $user@$ip"'x2x -west -to :0'"
+        fi
+    fi
+}
+
+function ssh_menu() {
+    echo "ssh connection"
+    ssh $user@$ip
+}
+
+# mnt_menu mounts target system with SSHFS
+# Input arguments:
+# $1: Local mountpoint in ~/mnt/
+# $2: Remote mountpoint
+# $3: username on the remote host
+# $4: IP for the remote host
+function mnt_menu() {
+    mnt_select=$(echo -e "mount\numount\nexit" | dmenu -l 3)
+    cdir="$(pwd)"
+    echo "old dir: $cdir"
+    cd "$HOME/mnt/"
+    echo "dir = $(pwd)"
+    if [[ $mnt_select == "mount" ]]; then
+        mkdir -p "$1"
+        echo "Mounting $2 on local $1 usig IP $4 and username $3"
+        sshfs -o allow_other,default_permissions $3@$4:$2 "$HOME/mnt/$1/"
+    elif [[ $mnt_select == "umount" ]]; then
+        umount $1
+        cd "$HOME/mnt/"
+        rmdir $1
+    fi
+    cd $cdir
+}
+
+function legion_main(){
+    main_menu="ssh\nx2x\nsshfs\nexit"
+    select=$(echo -e $main_menu | dmenu -l 4)
+    if [[ $select == 'ssh' ]]; then
+        ssh_menu
+    elif [[ $select == 'x2x' ]]; then
+        x2x_menu
+    elif [[ $select == 'sshfs' ]]; then
+        mnt_menu $mnt $remote_mnt $user $ip
+    fi
+}
+
+function rpi_main() {
+    main_menu="ssh\nping\nsshfs\nExit"
+    select=$(echo -e $main_menu | dmenu -l 3)
+    if [[ $select == 'ssh' ]]; then
+        ssh ubuntu@$rpi_ip
+    elif [[ $select == 'ping' ]]; then
+        ping -c 3 $rpi_ip
+    elif [[ $select == 'sshfs' ]]; then
+        echo "Mouting $rpi_remote_mnt to $rpi_mnt over sshfs on ip $rpi_ip"
+        echo "to be done"
+    fi
+}
+
+# mount a disk through sshfs
+# Params:
+# $1: IP number
+# $2: Mount point on the remotes ystem ie /home/user
+# $3: Mount point on this machine
+function connect_sshfs() {
+    sudo sshfs -o allow_other,default_permissions root@$1:$2 $3
+}
+
+# Un mount the sshfs mount point
+# Param:
+# $1: Mount point on this machine
+function unconnect_sshfs() {
+    sudo umount $1
+}
+
+function main() {
+    menu="Legion\nRPi\nExit"
+    select=$(echo -e $menu | dmenu -l 3)
+    if [[ $select == 'Legion' ]]; then
+        legion_main
+    elif [[ $select == 'RPi' ]]; then
+        rpi_main
+    fi
+
+}
+
+
+main

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# File content search for BASH.
+#
+# How to use:
+# $ search '<filename filter>' 'String'
+# $ search '*.cpp' '#include <help.hpp>'
+#
+# Wiss seach for the text #include <help.hpp> in each cpp file
+# in the sub directary currently standing.
+
+echo "Search for $2 in files of type $1"
+cdir=$(pwd)
+# find $cdir -type f -name '*.tex'
+find $cdir -type f -name "$1" | while read fp; do
+	# echo $fp
+	if [[ -f $fp ]]; then
+		content=$(cat $fp | grep -E "$2")
+		len=$(echo $content | wc -c)
+		if [[ $len -gt 2 ]]; then
+			echo "=== $len ==="
+			echo -e "\e[0;32m $fp\e[0m"
+			echo -e "$content\n"
+		fi
+	fi
+
+
+done

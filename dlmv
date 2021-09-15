@@ -1,2 +1,11 @@
 #!/bin/bash
-mv ~/Downloads/$(ls -tr ~/Downloads/ | tail $1)
+if [[ $# != 2 ]]; then
+    echo -e " Download and move is used with 2 arguments\nFirst: The number resent files desierd to move\nSecound: Is the target"
+    echo -e "Exapmle:\n \$ dlmv 3 .\nWill move the last 3 files to the current folder."
+else
+    ls -tr $HOME/Downloads/ | tail -n $1 | while read fp ; do
+        echo "mv $HOME/Downloads/$fp $2"
+        mv "$HOME/Downloads/$fp" "$2"
+    done
+fi
+
