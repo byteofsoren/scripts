@@ -23,4 +23,16 @@ fi
 # DONE
 
 ```
+Add this line to your `.tmux.conf` file.
 
+``` Tmux
+set-hook -g after-split-window "if-shell '[[ -n $(tmux show-window-option -v @run_idf_onpannel 2>/dev/null) && $(tmux show-window-option -v @run_idf_onpannel 2>/dev/null) == 1 ]]' 'send-keys \"get_idf\" C-m'"
+
+```
+
+# ZSH color flags
+Add it to the `.zshrc` file as above to get color output like:
+
+``` language
+echo "${F_OK} Its ${C_GREEN}OK${C_NO_COLOR} to be afraid."
+```
